@@ -2,7 +2,7 @@
 <extension version="4.1" type="plugin" group="task" method="upgrade">
 	<name>plugin Task Automsg</name>
 	<author>conseilgouz</author>
-	<creationDate>20/03/2023</creationDate>
+	<creationDate>21/03/2023</creationDate>
 	<copyright>Copyright (C) 2023 ConseilGouz. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later; see LICENSE.txt</license>
 	<authorEmail>pascal.leconte@conseilgouz.com</authorEmail>

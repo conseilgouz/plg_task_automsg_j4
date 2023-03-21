@@ -205,9 +205,10 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
     }
     private function updateAutoMsgTable(){
         $db    = Factory::getDbo();
+        $date = Factory::getDate();
         $query = $db->getQuery(true)
         ->update($db->quoteName('#__automsg'))
-        ->set($db->quoteName('state').'=1')
+        ->set($db->quoteName('state').'=1,'.$db->quoteName('sent').'='.$db->quote($date->toSql()))
         ->where($db->quoteName('state') . ' = 0');
         $db->setQuery($query);
         $db->execute();
