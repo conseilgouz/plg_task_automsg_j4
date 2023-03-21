@@ -1,0 +1,14 @@
+<changelogs>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
+		<version>1.0.0</version>
+        <note>
+            <item>20/03/2023</item>
+        </note>
+          <addition>
+            <item>Nouveau plugin J4.1</item>
+        </addition>
+	</changelog>
+</changelogs>
