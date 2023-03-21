@@ -51,7 +51,8 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	];
 	protected $myparams;
     protected $pluginParam,$categories, $usergroups,$deny,$tokens;
-    protected $itemtags, $info_cat, $tag_img,$cat_img, $url, $needCatImg,$needIntroImg;
+    protected $itemtags, $info_cat, $tag_img,$cat_img, $cat_emb_img,
+    $introimg,$introimg_emb, $url, $needCatImg,$needIntroImg;
     protected $creator;
     /**
 	 * @inheritDoc
@@ -85,6 +86,8 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 		return TaskStatus::OK;		
 	}
 	protected function goMsg() {
+	    $lang = Factory::getLanguage();
+	    $lang->load('plg_content_publishedarticle');
 	    $db = Factory::getDbo();
 	    $query = $db->getQuery(true)
 	    ->select($db->quoteName('u.id'))
@@ -110,6 +113,8 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	    $this->articles = $this->getArticlesToSend();
         // build message body 
         $articlesList = "";
+        $cat_img = array();
+        $intro_img = array();
 	    foreach ($this->articles as $articleid) {
 	        $model     = new ArticleModel(array('ignore_request' => true));
 	        $model->setState('params', $this->params);
@@ -128,7 +133,10 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	        $article = $model->getItem($articleid);
 	        $articlesList .= $this->oneLine($article);
 	    }
-	    $this->sendEmails($articlesList);
+	    if ($articlesList) {
+	       $this->sendEmails($articlesList);
+	       $this->updateAutoMsgTable();
+	    }
 	}
 	private function getAutomsgToken($users) {
 	    $tokens = array();
@@ -187,7 +195,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
     private function getArticlesToSend() {
         $db    = Factory::getDbo();
         $query = $db->getQuery(true)
-        ->select($db->quoteName('article_id'))
+        ->select('DISTINCT '.$db->quoteName('article_id'))
             ->from($db->quoteName('#__automsg'))
             ->where($db->quoteName('state') . ' = 0');
             
@@ -195,12 +203,37 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
         $result = $db->loadColumn();
         return $result;
     }
+    private function updateAutoMsgTable(){
+        $db    = Factory::getDbo();
+        $query = $db->getQuery(true)
+        ->update($db->quoteName('#__automsg'))
+        ->set($db->quoteName('state').'=1')
+        ->where($db->quoteName('state') . ' = 0');
+        $db->setQuery($query);
+        $db->execute();
+        return true;
+    }
     private function oneLine($article) {
         $msgcreator = $this->pluginParams->get('msgcreator', 0);
         $creatorId = $article->created_by;
         $this->creator = Factory::getUser($creatorId);
-        $this->url = "<a href='".URI::root()."index.php?option=com_content&view=article&id=".$articleid."' target='_blank'>".Text::_("PLG_CONTENT_PUBLISHEDARTICLE_CLICK")."</a>";
+        $this->url = "<a href='".URI::root()."index.php?option=com_content&view=article&id=".$article->id."' target='_blank'>".Text::_("PLG_CONTENT_PUBLISHEDARTICLE_CLICK")."</a>";
         $this->info_cat = $this->getCategoryName($article->catid);
+        $cat_params = json_decode($this->info_cat[0]->params);
+        $this->cat_img[$article->id] = "";
+        $this->cat_img_emb[$article->id] = "";
+        if ($cat_params->image != "") {
+            $this->cat_img[$article->id] = '<img src="cid:catimg'.$article->id.'"  alt="'.$cat_params->image_alt.'" /> ';
+            $this->cat_img_emb[$article->id] = $cat_params->image ;
+        }
+        $images  = json_decode($article->images);
+        $this->introimg[$article->id] = "";
+        $this->introimg_emb[$article->id] = "";
+        if (!empty($images->image_intro)) { // into img exists
+            $uneimage = '<img src="cid:introimg'.$article->id.'" alt="'.htmlspecialchars($images->image_intro_alt).'">';
+            $this->introimg[$article->id] = $uneimage;
+            $this->introimg_emb[$article->id] = $images->image_intro;
+        }
         
         $line = $this->pluginParams->get('asyncline', "");
         
@@ -211,15 +244,60 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
         return $line.'<br>';
     }
     private function replaceTags($line,$article) {
-        $arr_replace= array("{creator}"=>$this->creator->name,"{id}"=>$article->id,"{title}"=>$article->title, "{cat}"=>$this->info_cat[0]->title,"{date}"=>HTMLHelper::_('date', $article->created, $libdateformat), "{intro}" => $article->introtext, "{catimg}" => $this->cat_img, "{url}" => $this->url, "{introimg}"=>$article->introimg, "{subtitle}" => $article->subtitle, "{tags}" => $itemtags,"{featured}" => $article->featured);
+        $arr_replace= array("{creator}"=>$this->creator->name,"{id}"=>$article->id,"{title}"=>$article->title, "{cat}"=>$this->info_cat[0]->title,"{date}"=>HTMLHelper::_('date', $article->created, $libdateformat), "{intro}" => $article->introtext, "{catimg}" => $this->cat_img[$article->id], "{url}" => $this->url, "{introimg}"=>$this->introimg[$article->id], "{subtitle}" => $article->subtitle, "{tags}" => $itemtags,"{featured}" => $article->featured);
         foreach ($arr_replace as $key_c => $val_c) {
             $line = str_replace($key_c, Text::_($val_c),$line);
         }
         return $line;
     }
-    
     private function sendEmails($articlesList) {
+        $config = Factory::getConfig();
+        $subject = $this->pluginParams->get('subject','');
+        $bodyStd = $this->pluginParams->get('body', '');
+        $bodyStd = str_replace('{list}',$articlesList,$bodyStd);
         
+        foreach ($this->users as $user_id) {
+            // Load language for messaging
+            $receiver = Factory::getUser($user_id);
+            $go = false;
+            $body = $bodyStd;
+            if (strpos($body,'{unsubscribe}')) {
+                $unsubscribe = "";
+                if ($this->tokens[$user_id]) {
+                    $unsubscribe ="<a href='".URI::root()."index.php?option=com_automsg&view=automsg&layout=edit&token=".$this->tokens[$user_id]."' target='_blank'>".Text::_('PLG_CONTENT_PUBLISHEDARTICLE_UNSUBSCRIBE')."</a>";
+                }
+                $body = str_replace('{unsubscribe}',$unsubscribe ,$body);
+            }
+            $data = $receiver->getProperties();
+            $data['fromname'] = $config->get('fromname');
+            $data['mailfrom'] = $config->get('mailfrom');
+            $data['sitename'] = $config->get('sitename');
+            $data['email'] = PunycodeHelper::toPunycode($receiver->get('email'));
+            
+            $lang = Factory::getLanguage();
+            $lang->load('plg_content_publishedarticle');
+            $emailSubject = $subject;
+            $emailBody = $body;
+            $mailer = Factory::getMailer();
+            $config = Factory::getConfig();
+            $sender = array(
+                $config->get( 'mailfrom' ),
+                $config->get( 'fromname' )
+            );
+            $mailer->setSender($sender);
+            $mailer->addRecipient($data['email']);
+            $mailer->setSubject($emailSubject);
+            $mailer->isHtml(true);
+            $mailer->Encoding = 'base64';
+            $mailer->setBody($emailBody);
+            foreach ($this->cat_img_emb as $k =>$i) {
+                $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'catimg'.$k);
+            }
+            foreach ($this->introimg_emb as $k =>$i) {
+                $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'introimg'.$k);
+            }
+            $send = $mailer->Send();
+        }
     }
     private function getCategoryName($id)
     {
