@@ -43,7 +43,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	 * @since 4.1.0
 	 */
 	protected const TASKS_MAP = [
-		'cinema' => [
+		'automsg' => [
 			'langConstPrefix' => 'PLG_TASK_AUTOMSG',
 			'form'            => 'automsg',
 			'method'          => 'automsg',
