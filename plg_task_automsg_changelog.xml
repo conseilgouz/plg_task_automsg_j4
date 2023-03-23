@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.0.1</version>
+        <note>
+            <item>23/03/2023</item>
+        </note>
+          <change>
+            <item>Published article plugin becomes content automsg plugin</item>
+        </change>
+	</changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.0.0</version>
         <note>
             <item>21/03/2023</item>

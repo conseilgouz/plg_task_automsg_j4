@@ -1,6 +1,6 @@
 <?php
 /** Automsg Task
-* Version			: 1.0.0
+* Version			: 1.0.1
 * Package			: Joomla 4.x
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -73,7 +73,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	protected function automsg(ExecuteTaskEvent $event): int {
 		$app = Factory::getApplication();
 		$this->myparams = $event->getArgument('params');
-		$plugin = PluginHelper::getPlugin('content', 'publishedarticle');
+		$plugin = PluginHelper::getPlugin('content', 'automsg');
 		// Check if plugin is enabled
 		if ($plugin)
 		{
@@ -87,7 +87,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
 	}
 	protected function goMsg() {
 	    $lang = Factory::getLanguage();
-	    $lang->load('plg_content_publishedarticle');
+	    $lang->load('plg_content_automsg');
 	    $db = Factory::getDbo();
 	    $query = $db->getQuery(true)
 	    ->select($db->quoteName('u.id'))
