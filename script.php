@@ -1,7 +1,7 @@
 <?php
 /**
 * Task Automsg Plugin  - Joomla 4.1.0 Plugin 
-* Version			: 1.0.0
+* Version			: 1.0.2
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -65,7 +65,14 @@ class plgtaskAutomsgInstallerScript
 		return true;
     }
 	private function postinstall_cleanup() {
-
+		$obsoletes = [
+			sprintf("%s/plugins/plg_task_".$this->extname."/automsg.php", JPATH_SITE, $this->extname)
+		];
+		foreach ($obsoletes as $file) {
+			if (@is_file($file)) {
+				File::delete($file);
+			}
+		}
 		$db = Factory::getDbo();
         $conditions = array(
             $db->qn('type') . ' = ' . $db->q('plugin'),

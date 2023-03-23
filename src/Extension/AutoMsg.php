@@ -6,6 +6,7 @@
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 *
 */
+namespace ConseilGouz\Plugin\Task\AutoMsg\Extension;
 
 defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
@@ -27,7 +28,7 @@ use Joomla\Database\ParameterType;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\String\PunycodeHelper;
 
-class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
+class AutoMsg extends CMSPlugin implements SubscriberInterface
 {
 		use TaskPluginTrait;
 
@@ -218,7 +219,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
         $msgcreator = $this->pluginParams->get('msgcreator', 0);
         $creatorId = $article->created_by;
         $this->creator = Factory::getUser($creatorId);
-        $this->url = "<a href='".URI::root()."index.php?option=com_content&view=article&id=".$article->id."' target='_blank'>".Text::_("PLG_CONTENT_PUBLISHEDARTICLE_CLICK")."</a>";
+        $this->url = "<a href='".URI::root()."index.php?option=com_content&view=article&id=".$article->id."' target='_blank'>".Text::_("PLG_CONTENT_AUTOMSG_CLICK")."</a>";
         $this->info_cat = $this->getCategoryName($article->catid);
         $cat_params = json_decode($this->info_cat[0]->params);
         $this->cat_img[$article->id] = "";
@@ -265,7 +266,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
             if (strpos($body,'{unsubscribe}')) {
                 $unsubscribe = "";
                 if ($this->tokens[$user_id]) {
-                    $unsubscribe ="<a href='".URI::root()."index.php?option=com_automsg&view=automsg&layout=edit&token=".$this->tokens[$user_id]."' target='_blank'>".Text::_('PLG_CONTENT_PUBLISHEDARTICLE_UNSUBSCRIBE')."</a>";
+                    $unsubscribe ="<a href='".URI::root()."index.php?option=com_automsg&view=automsg&layout=edit&token=".$this->tokens[$user_id]."' target='_blank'>".Text::_('PLG_CONTENT_AUTOMSG_UNSUBSCRIBE')."</a>";
                 }
                 $body = str_replace('{unsubscribe}',$unsubscribe ,$body);
             }
@@ -276,7 +277,7 @@ class PlgTaskAutomsg extends CMSPlugin implements SubscriberInterface
             $data['email'] = PunycodeHelper::toPunycode($receiver->get('email'));
             
             $lang = Factory::getLanguage();
-            $lang->load('plg_content_publishedarticle');
+            $lang->load('plg_content_automsg');
             $emailSubject = $subject;
             $emailBody = $body;
             $mailer = Factory::getMailer();

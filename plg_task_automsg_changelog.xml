@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.0.2</version>
+        <note>
+            <item>23/03/2023</item>
+        </note>
+          <change>
+            <item>Normalize Task plugin</item>
+        </change>
+	</changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.0.1</version>
         <note>
             <item>23/03/2023</item>
