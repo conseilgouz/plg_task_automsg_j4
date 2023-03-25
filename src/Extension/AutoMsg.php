@@ -1,6 +1,6 @@
 <?php
 /** Automsg Task
-* Version			: 1.0.1
+* Version			: 1.0.3
 * Package			: Joomla 4.x
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -293,10 +293,10 @@ class AutoMsg extends CMSPlugin implements SubscriberInterface
             $mailer->Encoding = 'base64';
             $mailer->setBody($emailBody);
             foreach ($this->cat_img_emb as $k =>$i) {
-                $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'catimg'.$k);
+                if ($i) $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'catimg'.$k);
             }
             foreach ($this->introimg_emb as $k =>$i) {
-                $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'introimg'.$k);
+                if ($i) $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'introimg'.$k);
             }
             $send = $mailer->Send();
         }
