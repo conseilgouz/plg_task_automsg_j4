@@ -1,7 +1,6 @@
 <?php
 /** Automsg Task
-* Version			: 1.0.3
-* Package			: Joomla 4.x
+* Version			: 1.0.4
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 *
@@ -55,6 +54,19 @@ class AutoMsg extends CMSPlugin implements SubscriberInterface
     protected $itemtags, $info_cat, $tag_img,$cat_img, $cat_emb_img,
     $introimg,$introimg_emb, $url, $needCatImg,$needIntroImg;
     protected $creator;
+    /**
+     * Constructor.
+     *
+     * @param   DispatcherInterface  $dispatcher  The dispatcher
+     * @param   array                $config      An optional associative array of configuration settings
+     *
+     * @since   4.2.0
+     */
+    public function __construct(DispatcherInterface $dispatcher, array $config)
+    {
+        parent::__construct($dispatcher, $config);
+
+    }
     /**
 	 * @inheritDoc
 	 *
