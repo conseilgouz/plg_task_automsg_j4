@@ -1,6 +1,6 @@
 <?php
 /** Automsg Task
-* Version			: 1.0.4
+* Version			: 1.0.5
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 *
@@ -23,6 +23,7 @@ use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status as TaskStatus;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
 use Joomla\Event\SubscriberInterface;
+use Joomla\Event\DispatcherInterface;
 use Joomla\Database\ParameterType;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\String\PunycodeHelper;

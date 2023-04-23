@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.0.5</version>
+        <note>
+            <item>23/04/2023</item>
+        </note>
+		<fix>
+            <item>Missing DispatcherInterface definition</item>
+        </fix>
+	</changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.0.4</version>
         <note>
             <item>23/04/2023</item>
