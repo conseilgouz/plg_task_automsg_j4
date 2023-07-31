@@ -1,7 +1,7 @@
 <?php
 /**
-* Task Automsg Plugin  - Joomla 4.1.0 Plugin 
-* Version			: 1.0.2
+* Task Automsg Plugin  - Joomla 4.x/5.x Plugin 
+* Version			: 1.1.0
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -11,12 +11,12 @@ use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Filesystem\Folder;
 use Joomla\CMS\Version;
-use Joomla\CMS\Filesystem\File;
+use Joomla\Filesystem\File;
 
 class plgtaskAutomsgInstallerScript
 {
 	private $min_joomla_version      = '4.1.0';
-	private $min_php_version         = '7.2';
+	private $min_php_version         = '7.4';
 	private $name                    = 'Plugin Automsg';
 	private $exttype                 = 'plugin';
 	private $extname                 = 'automsg';
@@ -128,7 +128,7 @@ class plgtaskAutomsgInstallerScript
 	}
 	private function uninstallInstaller()
 	{
-		if ( ! JFolder::exists(JPATH_PLUGINS . '/system/' . $this->installerName)) {
+		if ( ! is_dir(JPATH_PLUGINS . '/system/' . $this->installerName)) {
 			return;
 		}
 		$this->delete([

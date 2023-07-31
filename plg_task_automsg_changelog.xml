@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.1.0</version>
+        <note>
+            <item>31/07/2023</item>
+        </note>
+		<fix>
+            <item>Joomla 5.x compatibility</item>
+        </fix>
+	</changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.0.5</version>
         <note>
             <item>23/04/2023</item>
