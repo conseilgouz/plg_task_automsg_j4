@@ -1,7 +1,7 @@
 <?php
 /**
 * Task Automsg Plugin  - Joomla 4.x/5.x Plugin 
-* Version			: 1.1.0
+* Version			: 1.1.1
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
 */
@@ -9,7 +9,7 @@
 defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
-use Joomla\CMS\Filesystem\Folder;
+use Joomla\Filesystem\Folder;
 use Joomla\CMS\Version;
 use Joomla\Filesystem\File;
 
@@ -22,6 +22,7 @@ class plgtaskAutomsgInstallerScript
 	private $extname                 = 'automsg';
 	private $previous_version        = '';
 	private $dir           = null;
+	private $lang;
 	private $installerName = 'plgtaskautomsginstaller';
 	public function __construct()
 	{
