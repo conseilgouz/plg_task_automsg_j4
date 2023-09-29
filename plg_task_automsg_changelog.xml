@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.1.2</version>
+        <note>
+            <item>29/09/2023</item>
+        </note>
+		<fix>
+            <item>Suppress notice "Only variables should be passed by reference"</item>
+        </fix>
+	</changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.1.1</version>
         <note>
             <item>04/08/2023</item>

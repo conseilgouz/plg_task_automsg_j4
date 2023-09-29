@@ -1,7 +1,7 @@
 <?php
 
 /** Automsg Task
-* Version			: 1.0.4
+* Version			: 1.1.2
 * Package			: Joomla 4.x
 * copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
 * license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
@@ -33,8 +33,9 @@ return new class implements ServiceProviderInterface
         $container->set(
             PluginInterface::class,
             function (Container $container) {
+				$dispatcher = $container->get(DispatcherInterface::class);
                 $plugin = new AutoMsg(
-                    $container->get(DispatcherInterface::class),
+                    $dispatcher,
                     (array) PluginHelper::getPlugin('task', 'automsg')
                 );
                 $plugin->setApplication(Factory::getApplication());
