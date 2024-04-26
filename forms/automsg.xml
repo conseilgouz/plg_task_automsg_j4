@@ -2,6 +2,12 @@
 <form>
 	<fields name="params">
 		<fieldset name="task_params">
+			<field name="log"
+				type="radio" class="btn-group btn-group-yesno" default="0"
+				label="PLG_TASK_AUTOMSG_LOG" description="PLG_TASK_AUTOMSG_LOG_DESC">
+				<option value="0">Non</option>
+				<option value="1">Oui</option>
+			</field>
 		</fieldset>
 	</fields>
 </form>

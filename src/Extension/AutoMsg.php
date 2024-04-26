@@ -1,32 +1,34 @@
 <?php
 /** Automsg Task
-* Version			: 1.0.5
-* copyright 		: Copyright (C) 2023 ConseilGouz. All rights reserved.
-* license    		: http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL
+* Version			: 1.1.3
+* copyright 		: Copyright (C) 2024 ConseilGouz. All rights reserved.
+* license    		: https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
 *
 */
 namespace ConseilGouz\Plugin\Task\AutoMsg\Extension;
 
 defined('_JEXEC') or die;
+use Joomla\CMS\Component\ComponentHelper;
+use Joomla\CMS\Date\Date;
 use Joomla\CMS\Factory;
-use Joomla\Registry\Registry;
+use Joomla\CMS\HTML\HTMLHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+use Joomla\CMS\Mail\Exception\MailDisabledException;
 use Joomla\CMS\Plugin\CMSPlugin;
 use Joomla\CMS\Plugin\PluginHelper;
-use Joomla\CMS\Component\ComponentHelper;
-use Joomla\Component\Content\Site\Model\ArticleModel;
-use Joomla\CMS\Date\Date;
-use Joomla\CMS\HTML\HTMLHelper;
-use Joomla\CMS\Filesystem\Folder;
-use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\String\PunycodeHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Content\Site\Model\ArticleModel;
 use Joomla\Component\Scheduler\Administrator\Event\ExecuteTaskEvent;
 use Joomla\Component\Scheduler\Administrator\Task\Status as TaskStatus;
 use Joomla\Component\Scheduler\Administrator\Traits\TaskPluginTrait;
+use Joomla\Database\ParameterType;
 use Joomla\Event\SubscriberInterface;
 use Joomla\Event\DispatcherInterface;
-use Joomla\Database\ParameterType;
-use Joomla\CMS\Language\Text;
-use Joomla\CMS\String\PunycodeHelper;
+use Joomla\Filesystem\Folder;
+use Joomla\Filesystem\File;
+use Joomla\Registry\Registry;
 
 class AutoMsg extends CMSPlugin implements SubscriberInterface
 {
@@ -270,7 +272,13 @@ class AutoMsg extends CMSPlugin implements SubscriberInterface
         $subject = $this->pluginParams->get('subject','');
         $bodyStd = $this->pluginParams->get('body', '');
         $bodyStd = str_replace('{list}',$articlesList,$bodyStd);
-        
+        if ($this->pluginParams->get('log', 0)) { // need to log msgs
+            Log::addLogger(
+                array('text_file' => 'plg_task_automsg.log.php'),
+                Log::ALL,
+                array('plg_task_automsg')
+            );
+        }
         foreach ($this->users as $user_id) {
             // Load language for messaging
             $receiver = Factory::getUser($user_id);
@@ -311,7 +319,19 @@ class AutoMsg extends CMSPlugin implements SubscriberInterface
             foreach ($this->introimg_emb as $k =>$i) {
                 if ($i) $mailer->AddEmbeddedImage(JPATH_ROOT.'/'.$i,'introimg'.$k);
             }
-            $send = $mailer->Send();
+            try {
+                $send = $mailer->Send();
+            } catch (MailDisabledException | phpMailerException $e) {
+                if ($this->pluginParams->get('log', 0)) { // need to log msgs
+                    Log::add('Erreur ----> Article : '.$article->title.' non envoyé à '.$receiver->get('email').'/'.$e->getMessage(), Log::ERROR, 'plg_content_automsg');
+                } else {
+                    Factory::getApplication()->enqueueMessage($e->getMessage().'/'.$receiver->get('email'), 'error');
+                }
+                continue; // try next one
+            }
+            if ($this->pluginParams->get('log', 0)) { // need to log msgs
+                Log::add('Article OK : '.$article->title.' envoyé à '.$receiver->get('email'), Log::DEBUG, 'plg_content_automsg');
+            }
         }
     }
     private function getCategoryName($id)
