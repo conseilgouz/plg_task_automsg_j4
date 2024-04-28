@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.2.1</version>
+        <note>
+            <item>28/04/2024</item>
+        </note>
+		<fix>
+			<item>Suppress PHP Warning:  Undefined property: stdClass::$subtitle</item>
+		</fix>
+    </changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.2.0</version>
         <note>
             <item>27/04/2024</item>

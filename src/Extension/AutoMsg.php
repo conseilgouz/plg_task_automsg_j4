@@ -246,8 +246,8 @@ final class AutoMsg extends CMSPlugin implements SubscriberInterface
         $this->info_cat = $this->getCategoryName($article->catid);
         $cat_params = json_decode($this->info_cat[0]->params);
         $this->cat_img = "";
-        if ($cat_params->image != "") {
-            $img = HTMLHelper::cleanImageURL($cat_params->image_intro);
+        if (isset($cat_params->image) && ($cat_params->image != "")) {
+            $img = HTMLHelper::cleanImageURL($cat_params->image);
             $this->cat_img = '<img src="'.URI::root().pathinfo($img->url)['dirname'].'/'.pathinfo($img->url)['basename'].'" />';
         }
         $images  = json_decode($article->images);
@@ -274,7 +274,7 @@ final class AutoMsg extends CMSPlugin implements SubscriberInterface
                 'intro'     => $article->introtext,
                 'introimg'  => $article->introimg,
                 'url'       => $this->url,
-                'subtitle'  => $article->subtitle,
+                'subtitle'  => '', // not used
                 'tags'      => $this->itemtags,
                 'featured'  => $article->featured,
             ];
