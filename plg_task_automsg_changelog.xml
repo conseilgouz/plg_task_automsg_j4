@@ -3,6 +3,18 @@
 		<element>automsg</element>
 		<type>plugin</type>
 		<group>task</group>
+		<version>1.2.2</version>
+        <note>
+            <item>29/04/2024</item>
+        </note>
+		<fix>
+			<item>Unistall : delete email template</item>
+		</fix>
+    </changelog>
+	<changelog>
+		<element>automsg</element>
+		<type>plugin</type>
+		<group>task</group>
 		<version>1.2.1</version>
         <note>
             <item>28/04/2024</item>

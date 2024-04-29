@@ -1,7 +1,7 @@
 <?php
 /**
 * Task Automsg Plugin  - Joomla 4.x/5.x Plugin
-* Version			: 1.2.0
+* Version			: 1.2.2
 * copyright 		: Copyright (C) 2024 ConseilGouz. All rights reserved.
 * license    		: https://www.gnu.org/licenses/gpl-3.0.html GNU/GPL
 */
@@ -50,6 +50,12 @@ class plgtaskAutomsgInstallerScript
         if (! file_exists($this->dir . '/' . $this->installerName . '.xml')) {
             return true;
         }
+    }
+    function uninstall($parent) {
+        $template = new TemplateModel(array('ignore_request' => true));
+        $table = $template->getTable();
+        $table->delete('plg_task_automsg.asyncmail');
+        return true;
     }
 
     public function postflight($type, $parent)
